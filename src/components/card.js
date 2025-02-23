@@ -1,17 +1,18 @@
-// @todo: Темплейт карточки
-
-// @todo: DOM узлы
-
-// @todo: Функция создания карточки
-
-// @todo: Функция удаления карточки
-
-// @todo: Вывести карточки на страницу
+import { closeModal } from "./modal";
 
 const container = document.querySelector('.content');
 const cardsContainer = container.querySelector('.places__list');
 
-function renderCards({name, link}) {
+function addCard() {
+  
+}
+
+function deleteCard(card) {
+  card.remove();
+  closeModal();
+}
+
+function renderCard({name, link}) {
   const cardTemplate = document.querySelector('#card-template').content;
   const cardElement = cardTemplate.querySelector('.card').cloneNode(true);
   const deleteButton = cardElement.querySelector(".card__delete-button");
@@ -25,11 +26,5 @@ function renderCards({name, link}) {
   return cardElement;
 }
 
-function deleteCard(card) {
-  card.remove();
-}
-
-initialCards.map(renderCards).forEach(item => cardsContainer.append(item));
-  
-
+export {cardsContainer, renderCard};
 

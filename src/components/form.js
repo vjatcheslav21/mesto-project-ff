@@ -1,15 +1,13 @@
 import {closeModal} from "./modal";
 
-const nameInput = document.querySelector('.popup__input_type_name');
-const jobInput = document.querySelector('.popup__input_type_description');
 const profileName = document.querySelector('.profile__title');
 const profileDescr = document.querySelector('.profile__description');
-const placeInput = document.querySelector('.popup__input_type_card-name');
-const placeURLInput = document.querySelector('.popup__input_type_url');
+const nameInput = document.querySelector('.popup__input_type_name');
+const jobInput = document.querySelector('.popup__input_type_description');
+const popupProfileEdit = document.querySelector('.popup_type_edit');
 
 nameInput.value = profileName.innerHTML;
 jobInput.value = profileDescr.innerHTML;
-
 
 function handleFormSubmit(evt) {
     evt.preventDefault(); 
@@ -17,8 +15,7 @@ function handleFormSubmit(evt) {
     profileName.textContent = nameInput.value;
     profileDescr.textContent = jobInput.value;
 
-    console.log('Отправка!')
-    closeModal();
+    closeModal(popupProfileEdit);
 }
 
 export {handleFormSubmit};

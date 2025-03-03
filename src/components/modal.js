@@ -17,24 +17,35 @@ function handleEscape(evt) {
     }
 }
 
-function toggleModal(item, modal) {
+function openEditProfileModal(profileTitle, profileDescr, profileNameInput, profileJobInput, modal) {
 
-    item.addEventListener('click', (evt) => {
-        if (evt.target.classList.contains('profile__edit-button') || evt.target.classList.contains('profile__add-button') || evt.target.classList.contains('card__image')) {
-            openModal(modal);
-        }
-    });
+    profileNameInput.value = profileTitle.textContent
+    profileJobInput.value = profileDescr.textContent;
 
-    modal.addEventListener('mousedown', (evt) => {
-        if (evt.target === modal || evt.target.classList.contains('popup__close')) {
-            closeModal(modal);
-        }
-    });
-
-    document.addEventListener('keydown', handleEscape);
-
-    modal.classList.add('popup_is-animated');
-
+    openModal(modal);
 }
 
-export {toggleModal, openModal, closeModal};
+function openImageModal(evt, popImage, caption, modal) {
+    const parent = evt.target.closest('.places__item');
+    const titleImage = parent.querySelector('.card__title').textContent;
+    popImage.src = evt.target.src;
+    popImage.alt = titleImage;
+    caption.textContent= titleImage;
+    openModal(modal);
+}
+
+function closeModalByOverlayAndButton(popups) {
+    //Я не уверен, что это лучшее название для функции :(
+    popups.forEach((popup) => {
+        popup.addEventListener('mousedown', (evt) => {
+            if (evt.target.classList.contains('popup_is-opened')) {
+                closeModal(popup);
+            }
+            if (evt.target.classList.contains('popup__close')) {
+              closeModal(popup);
+            }
+        });
+    });
+}
+
+export {openModal, closeModal, openEditProfileModal, openImageModal, closeModalByOverlayAndButton};

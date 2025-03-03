@@ -1,40 +1,29 @@
 import {closeModal} from "./modal";
-import { cardsContainer, openModalImage, renderCard, deleteCard, addLikeCard } from "./card";
+import {cardsContainer, renderCard, deleteCard, addLikeCard, openImageModal } from "./card";
 
-const profileName = document.querySelector('.profile__title');
-const profileDescr = document.querySelector('.profile__description');
-const nameInput = document.querySelector('.popup__input_type_name');
-const jobInput = document.querySelector('.popup__input_type_description');
-const popupProfileEdit = document.querySelector('.popup_type_edit');
-const cardName = document.querySelector('.popup__input_type_card-name');
-const cardLink = document.querySelector('.popup__input_type_url');
-const popupNewCard = document.querySelector('.popup_type_new-card');
-
-nameInput.value = profileName.textContent
-jobInput.value = profileDescr.textContent;
-
-function handleFormSubmit(evt) {
+function handleProfileFormSubmit(evt, profileTitle, profileDescr, profileNameInput, profileJobInput, modal) {
     evt.preventDefault(); 
 
-    profileName.textContent = nameInput.value;
-    profileDescr.textContent = jobInput.value;
+    profileTitle.textContent = profileNameInput.value;
+    profileDescr.textContent = profileJobInput.value;
 
-    closeModal(popupProfileEdit);
+    closeModal(modal);
 }
 
-function addCard() {
+function addCard(cardNameInput, cardLinkInput) {
   const newCardObj = {
-    name: cardName.value,
-    link: cardLink.value,
+    name: cardNameInput.value,
+    link: cardLinkInput.value,
   };
-  cardsContainer.prepend(renderCard(newCardObj, deleteCard, addLikeCard, openModalImage));
+  
+  cardsContainer.prepend(renderCard(newCardObj, deleteCard, addLikeCard, openImageModal));
 }
 
-function handleFormNewCardSubmit(evt) {
+function handleFormNewCardSubmit(evt, cardNameInput, cardLinkInput, modal) {
   evt.preventDefault();
-  addCard(cardName, cardLink);
-  closeModal(popupNewCard);
+  addCard(cardNameInput, cardLinkInput);
+  closeModal(modal);
   evt.target.reset();
 }
 
-export {handleFormSubmit, handleFormNewCardSubmit};
+export {handleProfileFormSubmit, handleFormNewCardSubmit};

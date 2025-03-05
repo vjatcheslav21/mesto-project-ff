@@ -17,25 +17,7 @@ function handleEscape(evt) {
     }
 }
 
-function openEditProfileModal(profileTitle, profileDescr, profileNameInput, profileJobInput, modal) {
-
-    profileNameInput.value = profileTitle.textContent
-    profileJobInput.value = profileDescr.textContent;
-
-    openModal(modal);
-}
-
-function openImageModal(evt, popImage, caption, modal) {
-    const parent = evt.target.closest('.places__item');
-    const titleImage = parent.querySelector('.card__title').textContent;
-    popImage.src = evt.target.src;
-    popImage.alt = titleImage;
-    caption.textContent= titleImage;
-    openModal(modal);
-}
-
 function closeModalByOverlayAndButton(popups) {
-    //Я не уверен, что это лучшее название для функции :(
     popups.forEach((popup) => {
         popup.addEventListener('mousedown', (evt) => {
             if (evt.target.classList.contains('popup_is-opened')) {
@@ -48,4 +30,4 @@ function closeModalByOverlayAndButton(popups) {
     });
 }
 
-export {openModal, closeModal, openEditProfileModal, openImageModal, closeModalByOverlayAndButton};
+export {openModal, closeModal, closeModalByOverlayAndButton};

@@ -1,5 +1,8 @@
+// import { hideInputError } from "../scripts";
+
 function openModal(modal) {
     modal.classList.add('popup_is-opened');
+    // hideInputError(formSelector, inputSelector);
     document.addEventListener('keydown', handleEscape); 
 }
 

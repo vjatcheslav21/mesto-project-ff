@@ -2,7 +2,15 @@ import '../pages/index.css'
 import initialCards from '../components/cards';
 import {cardsContainer, renderCard, deleteCard, addLikeCard} from '../components/card';
 import {openModal, closeModal, closeModalByOverlayAndButton} from '../components/modal';
-// import {handleProfileFormSubmit, handleFormNewCardSubmit} from '../components/form';
+import {enableValidation, clearValidation} from '../components/validation';
+
+// import isValid from '../components/validation';
+// const formElement = document.querySelector('.popup__form');
+// const formInput = formElement.querySelector('.popup__input');
+// formInput.addEventListener('submit', isValid); 
+// import { test } from '../components/validation';
+
+// test();
 
 const modals = document.querySelectorAll('.popup');
 //Кнопки модальных окон
@@ -46,10 +54,11 @@ function openEditProfileModal(profileTitle, profileDescr, profileNameInput, prof
     profileNameInput.value = profileTitle.textContent;
     profileJobInput.value = profileDescr.textContent;
     openModal(popupProfileEdit);
+    clearValidation(formProfile, enableValidation);
 }
 
 //Вызов функции открытия модального окна редактирования профиля
-profileEditBtn.addEventListener('click', () => {
+profileEditBtn.addEventListener('click', (evt) => {
     openEditProfileModal(profileTitle, profileDescr, profileNameInput, profileJobInput, popupProfileEdit);
 });
 
@@ -67,11 +76,10 @@ function addCard(cardNameInput, cardLinkInput) {
     name: cardNameInput.value,
     link: cardLinkInput.value,
   };
-
   cardsContainer.prepend(renderCard(newCardObj, deleteCard, addLikeCard, openImageModal));
 }
 
-//Функция, которая добавляет на страницу новую карточку
+//Функция, которая добавляет новую карточку на страницу
 function handleFormNewCardSubmit(evt, cardNameInput, cardLinkInput) {
   evt.preventDefault();
   addCard(cardNameInput, cardLinkInput);
@@ -79,8 +87,18 @@ function handleFormNewCardSubmit(evt, cardNameInput, cardLinkInput) {
   evt.target.reset();
 }
 
+//Функция открытия модального окна для добавления карточки
+function openFormNewCardModal(cardNameInput, cardLinkInput, popupNewCard) {
+  cardNameInput.value = '';
+  cardLinkInput.value = '';
+  openModal(popupNewCard);
+  clearValidation(formPlace, enableValidation);
+}
+
 //Вызов функции открытия модального окна добавления карточки
-addCardBtn.addEventListener('click', () => openModal(popupNewCard));
+addCardBtn.addEventListener('click', () => {
+  openFormNewCardModal(cardNameInput, cardLinkInput, popupNewCard);
+});
 
 //Вызов функций по обработке форм
 formProfile.addEventListener('submit', (evt) => {
@@ -101,3 +119,13 @@ function openImageModal(evt) {
     openModal(popupImage);
 }
 
+  // enableValidation();
+
+  enableValidation({
+    formSelector: '.popup__form',
+    inputSelector: '.popup__input',
+    submitButtonSelector: '.popup__button',
+    inactiveButtonClass: 'popup__button_disabled',
+    inputErrorClass: 'popup__input_type_error',
+    errorClass: 'popup__input-error_active'
+  }); 

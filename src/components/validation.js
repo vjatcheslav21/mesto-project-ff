@@ -1,3 +1,12 @@
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__input-error_active'
+}; 
+
 //Функция, которая показывает ошибке
 const showInputError = (formSelector, inputSelector, errorMessage, validationConfig) => {
   const errorElement = formSelector.querySelector(`.${inputSelector.id}-error`);
@@ -53,7 +62,6 @@ const setEventListeners = (formSelector, validationConfig) => {
   const inputList = Array.from(formSelector.querySelectorAll(validationConfig.inputSelector));
   const submitButtonSelector = formSelector.querySelector(validationConfig.submitButtonSelector);
   toggleButtonState(inputList, submitButtonSelector, validationConfig);
-
   inputList.forEach((inputSelector) => {
     inputSelector.addEventListener('input', function () {
       isValid(formSelector, inputSelector, validationConfig);
@@ -62,9 +70,9 @@ const setEventListeners = (formSelector, validationConfig) => {
   });
 };
 
+//Главная функция, отвечающая за валидацию на сайте
 const enableValidation = (validationConfig) => {
   const formList = Array.from(document.querySelectorAll(validationConfig.formSelector));
-
   formList.forEach((formSelector) => {
     formSelector.addEventListener('submit', (evt) => {
       evt.preventDefault();
@@ -73,21 +81,18 @@ const enableValidation = (validationConfig) => {
   });
 }
 
+//Функция, которая убирает следы валидации 
 function clearValidation(formSelector, validationConfig) {
-  const inputList = Array.from(formSelector.querySelectorAll('.popup__input'));
-  const submitButtonSelector = formSelector.querySelector('.popup__button');
-  
-  //Вызов функции переключения состояния кнопки
-  toggleButtonState(inputList, submitButtonSelector, validationConfig);
-
-  //Либо переключения состояния кнопки вручную
-  // submitButtonSelector.disabled = true;
-  // submitButtonSelector.classList.add(validationConfig.inactiveButtonClass);
-
+  const inputList = Array.from(formSelector.querySelectorAll(validationConfig.inputSelector));
+  const submitButtonSelector = formSelector.querySelector(validationConfig.submitButtonSelector);
   inputList.forEach(inputSelector => {
     hideInputError(formSelector, inputSelector, validationConfig);
   });
-
+  toggleButtonState(inputList, submitButtonSelector, validationConfig);
 }
 
-export {enableValidation, clearValidation};
+export {
+        validationConfig,
+        enableValidation,
+        clearValidation
+      };

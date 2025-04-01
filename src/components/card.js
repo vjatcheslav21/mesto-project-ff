@@ -12,13 +12,24 @@ function renderCard(card, userId, deleteMyCard, toggleLike, openImageModal) {
   const likeCount = cardElement.querySelector('.card__like-count');
   const cardId = card._id;
   const cardOwnerId = card.owner._id;
+  const cardLikesOwners = card.likes;
+  //Условие, чтобы можно было удалять только свои карточки
     if (userId !== cardOwnerId) {   
       deleteButton.remove();
     } 
+    //Информация о карточке
     cardImage.src = card.link;
     cardImage.alt = card.name;
     cardTitle.textContent = card.name;
+    //Отображение количества лайков на странице
     likeCount.textContent = card.likes.length;
+    //Состояние кнопки лайка, если пользователь поставил лайк
+    //Отображается при загрузке страницы
+    cardLikesOwners.forEach(user => {
+      if (user._id == userId) {
+        likeButton.classList.add('card__like-button_is-active');
+      }
+    });
     deleteButton.addEventListener('click', () => deleteMyCard(cardElement, cardOwnerId, userId, cardId));
     likeButton.addEventListener('click', (evt) => toggleLike(evt, cardId, likeCount));
     cardImage.addEventListener('click', openImageModal);
@@ -27,8 +38,13 @@ function renderCard(card, userId, deleteMyCard, toggleLike, openImageModal) {
 
 function deleteMyCard(cardElement, cardOwnerId, userId, cardId) {
   if(cardOwnerId === userId) {
-    cardElement.remove();
     deleteCard(cardId)
+    .then(() => {
+      cardElement.remove();
+    })
+    .catch(err => {
+      console.log(`Ошибка: ${err} в функции удаления карточки`);
+    })
   }
 }
 
@@ -40,11 +56,17 @@ function toggleLike(evt, cardId, likeCount) {
         evt.target.classList.add('card__like-button_is-active');
         likeCount.textContent = data.likes.length;
       })
+      .catch(err => {
+        console.log(`Ошибка: ${err} в функции добавления лайка`);
+      })
   } else {
     deleteLikeCard(cardId)
       .then(data => {
         evt.target.classList.remove('card__like-button_is-active');
         likeCount.textContent = data.likes.length;
+      })
+      .catch(err => {
+        console.log(`Ошибка: ${err} в функции удаления лайка`);
       })
   }
 }

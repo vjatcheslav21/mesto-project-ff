@@ -2,19 +2,19 @@ import '../pages/index.css'
 // import initialCards from '../components/cards';
 import {cardsContainer, renderCard, deleteMyCard, toggleLike} from '../components/card';
 import {openModal, closeModal, closeModalByOverlayAndButton} from '../components/modal';
-import {validationConfig, enableValidation, clearValidation} from '../components/validation';
+import {enableValidation, clearValidation} from '../components/validation';
 import {getInitialCards, getUserInfo, updateProfileInfo, uploadNewCard, uploadNewAvatar} from '../components/api';
 
 const modals = document.querySelectorAll('.popup');
 const profileAvatar = document.querySelector('.profile__image');
-const popupButton = document.querySelectorAll('.popup__button');
+const popupButtons = document.querySelectorAll('.popup__button');
 //Кнопки модальных окон
 const avatarBtn = document.querySelector('.profile__image-button');
 const profileEditBtn = document.querySelector('.profile__edit-button');
 const addCardBtn = document.querySelector('.profile__add-button');
 //Изображение и его название
 const popImage = document.querySelector('.popup__image');
-const caption = document.querySelector('.popup__caption');
+const captionImage = document.querySelector('.popup__caption');
 //Модальньные окна
 const popupProfileAvatar = document.querySelector('.popup_type_avatar');
 const popupProfileEdit = document.querySelector('.popup_type_edit');
@@ -36,6 +36,15 @@ const profileJobInput = document.querySelector('.popup__input_type_description')
 //Инпуты формы добавления карточки
 const cardNameInput = document.querySelector('.popup__input_type_card-name');
 const cardLinkInput = document.querySelector('.popup__input_type_url');
+//Переменные связанные с валидацией
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__input-error_active'
+}; 
 
 //API. Вызов карточек с сервера и отображение их на странице
 Promise.all([getUserInfo(), getInitialCards()])
@@ -51,7 +60,7 @@ Promise.all([getUserInfo(), getInitialCards()])
     });
   })
   .catch((err) => {
-    console.log(err);
+    console.log(`Ошибка: ${err} в функции добавления всех карточек на страницу`);
   });
 
 //Функция, которая добавляет ссылку на аварат профиля в стили
@@ -61,20 +70,12 @@ function renderAvatar(avatarLink) {
 
 //Функция, которая сообщяет пользователю о загрузке данных
 function renderLoading(isLoading) {
-  popupButton.forEach(btn => {
+  popupButtons.forEach(btn => {
     if (isLoading) {
       btn.textContent = 'Сохранение...'
     } else if (!isLoading) {
       btn.textContent = 'Сохранить';
     }
-  })
-}
-
-//Функция, которая приводит кнопку в неактивное состояние
-function disabledButtonState() {
-  popupButton.forEach(btn => {
-    btn.disabled = true;
-    btn.classList.add('popup__button_disabled');
   })
 }
 
@@ -88,7 +89,7 @@ modals.forEach((modal) => {
 
 //Функция открытия модального окна для аватара
 function openAvatarModal() {
-  profileAvatarInput.value = '';
+  formAvatar.reset();
   openModal(popupProfileAvatar);
   clearValidation(formAvatar, validationConfig);
 }
@@ -98,7 +99,7 @@ avatarBtn.addEventListener('click', openAvatarModal);
 //Функция обработки формы аватара
 function handleFormNewAvatarSubmit(evt) {
   evt.preventDefault();
-  renderAvatar(true);
+  renderLoading(true);
   uploadNewAvatar(profileAvatarInput.value)
   .then((data) => {
     renderAvatar(data.avatar);
@@ -118,7 +119,6 @@ function openEditProfileModal(profileTitle, profileDescr, profileNameInput, prof
   profileNameInput.value = profileTitle.textContent;
   profileJobInput.value = profileDescr.textContent;
   clearValidation(formProfile, validationConfig);
-  disabledButtonState();
   openModal(popupProfileEdit);
 }
 
@@ -130,18 +130,19 @@ profileEditBtn.addEventListener('click', () => {
 //Функция обработки формы профиля
 function handleProfileFormSubmit(evt) {
   evt.preventDefault(); 
-  profileTitle.textContent = profileNameInput.value;
-  profileDescr.textContent = profileJobInput.value;
   renderLoading(true);
-  updateProfileInfo(profileTitle.textContent, profileDescr.textContent)
-    .catch((err) => {
-      console.log(`Ошибка: ${err} в функции обработки редактирования профиля`)
-    })
-    .finally(() => {
-      renderLoading(false)
-    })
-
-  closeModal(popupProfileEdit);
+  updateProfileInfo(profileNameInput.value, profileJobInput.value)
+  .then(() => {
+    profileTitle.textContent = profileNameInput.value;
+    profileDescr.textContent = profileJobInput.value;
+    closeModal(popupProfileEdit);
+  })
+  .catch((err) => {
+    console.log(`Ошибка: ${err} в функции обработки редактирования профиля`)
+  })
+  .finally(() => {
+    renderLoading(false)
+  })
 }
 
 //Функция, которая добавляет новую карточку на страницу
@@ -163,17 +164,14 @@ function handleFormNewCardSubmit(evt, cardNameInput, cardLinkInput) {
 }
 
 //Функция открытия модального окна для добавления карточки
-function openFormNewCardModal(cardNameInput, cardLinkInput, popupNewCard) {
-  cardNameInput.value = '';
-  cardLinkInput.value = '';
+function openFormNewCardModal() {
+  formPlace.reset();
   openModal(popupNewCard);
   clearValidation(formPlace, validationConfig);
 }
 
 //Вызов функции открытия модального окна добавления карточки
-addCardBtn.addEventListener('click', () => {
-  openFormNewCardModal(cardNameInput, cardLinkInput, popupNewCard);
-});
+addCardBtn.addEventListener('click', openFormNewCardModal);
 
 //Вызов функций по обработке форм
 formAvatar.addEventListener('submit', (evt) => handleFormNewAvatarSubmit(evt));
@@ -192,7 +190,7 @@ function openImageModal(evt) {
     const titleImage = parent.querySelector('.card__title').textContent;
     popImage.src = evt.target.src;
     popImage.alt = titleImage;
-    caption.textContent = titleImage;
+    captionImage.textContent = titleImage;
     openModal(popupImage);
 }
 

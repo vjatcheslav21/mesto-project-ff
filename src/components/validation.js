@@ -1,12 +1,3 @@
-const validationConfig = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__input-error_active'
-}; 
-
 //Функция, которая показывает ошибке
 const showInputError = (formSelector, inputSelector, errorMessage, validationConfig) => {
   const errorElement = formSelector.querySelector(`.${inputSelector.id}-error`);
@@ -21,6 +12,7 @@ const hideInputError = (formSelector, inputSelector, validationConfig) => {
   inputSelector.classList.remove(validationConfig.inputErrorClass);
   errorElement.classList.remove(validationConfig.errorClass);
   errorElement.textContent = '';
+  inputSelector.setCustomValidity("");
 };
 
 //Функция, которая проверяет валидность данных
@@ -92,7 +84,6 @@ function clearValidation(formSelector, validationConfig) {
 }
 
 export {
-        validationConfig,
         enableValidation,
         clearValidation
       };
